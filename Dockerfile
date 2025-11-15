@@ -1,17 +1,19 @@
-FROM node:20-alpine
+FROM node:20-bookworm-slim
 
-# Install build dependencies for native modules
-RUN apk add --no-cache python3 make g++ bash
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
-COPY .npmrc ./
 
-# Install dependencies and rebuild native modules
-RUN npm ci && \
-    npm rebuild @swc/core
+# Install dependencies
+RUN npm ci
 
 # Copy application code
 COPY . .
