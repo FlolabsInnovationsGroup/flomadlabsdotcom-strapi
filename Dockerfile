@@ -22,11 +22,15 @@ COPY . .
 # Set environment to production
 ENV NODE_ENV=production
 
-# Manually compile TypeScript (bypass admin build)
+# Manually compile TypeScript and verify
 RUN npx tsc && \
     mkdir -p dist && \
     cp -r src dist/ && \
-    echo "Manual build complete"
+    echo "=== Build verification ===" && \
+    ls -la dist/ && \
+    echo "=== Checking dist/config ===" && \
+    ls -la dist/config/ || echo "No config directory" && \
+    echo "=== Build complete ==="
 
 # Expose port
 EXPOSE 1337
