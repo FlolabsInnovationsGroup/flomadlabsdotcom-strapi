@@ -18,11 +18,11 @@ RUN npm ci
 # Copy application code
 COPY . .
 
-# Set environment
-ENV NODE_ENV=development
+# Set environment to production (skip admin build)
+ENV NODE_ENV=production
 
 # Expose port
 EXPOSE 1337
 
-# Build and start - this way native bindings load correctly at runtime
-CMD ["sh", "-c", "npm run build && npm start"]
+# Start without building admin panel
+CMD ["npm", "start"]
