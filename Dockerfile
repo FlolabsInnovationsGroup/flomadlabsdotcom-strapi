@@ -21,8 +21,11 @@ COPY . .
 # Set environment to production
 ENV NODE_ENV=production
 
-# Build Strapi (creates dist folder)
-RUN npm run build
+# Manually compile TypeScript (bypass admin build)
+RUN npx tsc && \
+    mkdir -p dist && \
+    cp -r src dist/ && \
+    echo "Manual build complete"
 
 # Expose port
 EXPOSE 1337
