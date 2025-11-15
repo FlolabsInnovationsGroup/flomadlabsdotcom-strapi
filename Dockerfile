@@ -18,12 +18,11 @@ RUN npm ci
 # Copy application code
 COPY . .
 
-# Build the application
+# Set environment
 ENV NODE_ENV=development
-RUN npm run build
 
 # Expose port
 EXPOSE 1337
 
-# Start command
-CMD ["npm", "start"]
+# Build and start - this way native bindings load correctly at runtime
+CMD ["sh", "-c", "npm run build && npm start"]
