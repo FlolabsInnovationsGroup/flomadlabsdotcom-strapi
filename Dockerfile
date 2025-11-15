@@ -12,8 +12,9 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies with platform-specific sharp
+RUN npm ci && \
+    npm install --os=linux --cpu=x64 sharp
 
 # Copy application code
 COPY . .
