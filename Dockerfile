@@ -9,8 +9,9 @@ WORKDIR /app
 COPY package*.json ./
 COPY .npmrc ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies and rebuild native modules
+RUN npm ci && \
+    npm rebuild @swc/core
 
 # Copy application code
 COPY . .
