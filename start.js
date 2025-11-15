@@ -1,5 +1,3 @@
-const strapi = require('@strapi/strapi');
-
 async function start() {
   try {
     console.log('=== Starting Strapi ===');
@@ -8,8 +6,10 @@ async function start() {
     console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL);
     console.log('DATABASE_URL value:', process.env.DATABASE_URL ? 'set' : 'NOT SET');
     
-    // Strapi 5 uses direct factory function, not .default()
-    const app = await strapi().start();
+    // Strapi 5 factory - use dynamic import or require the factory directly
+    const { default: strapiFactory } = await import('@strapi/strapi');
+    const app = await strapiFactory().start();
+    
     console.log('=== Strapi started successfully ===');
   } catch (error) {
     console.error('=== FULL ERROR DETAILS ===');
