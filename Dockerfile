@@ -35,5 +35,5 @@ RUN npx tsc && \
 # Expose port
 EXPOSE 1337
 
-# Start Strapi
-CMD ["npm", "start"]
+# Use custom start script for better error logging
+CMD ["node", "start.js"]
