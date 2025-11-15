@@ -25,6 +25,19 @@
       "multiple": false,
       "required": true,
       "allowedTypes": ["images"]
+    },
+    "link": {
+      "type": "string",
+      "required": false
+    },
+    "buttonText": {
+      "type": "string",
+      "required": false,
+      "default": "Visit Site"
+    },
+    "buttonLink": {
+      "type": "string",
+      "required": false
     }
   }
 }
