@@ -6,8 +6,10 @@ async function start() {
     console.log('NODE_ENV:', process.env.NODE_ENV);
     console.log('DATABASE_CLIENT:', process.env.DATABASE_CLIENT);
     console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL);
+    console.log('DATABASE_URL value:', process.env.DATABASE_URL ? 'set' : 'NOT SET');
     
-    const app = await strapi.default().start();
+    // Strapi 5 uses direct factory function, not .default()
+    const app = await strapi().start();
     console.log('=== Strapi started successfully ===');
   } catch (error) {
     console.error('=== FULL ERROR DETAILS ===');
