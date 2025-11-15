@@ -18,11 +18,14 @@ RUN npm ci
 # Copy application code
 COPY . .
 
-# Set environment to production (skip admin build)
+# Set environment to production
 ENV NODE_ENV=production
+
+# Build Strapi (creates dist folder)
+RUN npm run build
 
 # Expose port
 EXPOSE 1337
 
-# Start without building admin panel
+# Start Strapi
 CMD ["npm", "start"]
