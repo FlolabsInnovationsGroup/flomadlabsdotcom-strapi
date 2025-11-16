@@ -3,51 +3,57 @@ const FormData = require('form-data');
 const fs = require('fs');
 const path = require('path');
 
-const STRAPI_URL = process.env.RAILWAY_STRAPI_URL || 'https://flomadlabsdotcom-strapi-production.up.railway.app';
+const STRAPI_URL = 'https://flomadlabsdotcom-strapi-production.up.railway.app';
 const API_TOKEN = process.env.STRAPI_API_TOKEN;
-const IMAGE_DIR = path.join(__dirname, '../images');
+const IMAGE_DIR = path.join(__dirname, '..', 'images');
 
 console.log(`🚀 Seeding to: ${STRAPI_URL}`);
 
+// Data arrays
 const focusAreas = [
-  { title: "Education", description: "Experiential learning for advanced AI and robotics.", link: "/education", image: "education_new2.png" },
-  { title: "Healthcare", description: "AI-powered insights for better health and wellness.", link: "/healthcare", image: "health2.png" },
-  { title: "Travel", description: "Conversational AI transforming trip planning.", link: "/travel", image: "conversational1.png" },
-  { title: "Space", description: "Advancing space exploration through AI research.", link: "/space", image: "space1.png" }
+  { title: "AI & Robotics", description: "Advancing intelligent machines and automation.", link: "/ai-robotics", image: "aiandroboticspic.png" },
+  { title: "AI Travel on Earth", description: "AI-powered travel solutions for Earth exploration.", link: "/ai-travel", image: "aitravelonearth.png" },
+  { title: "Animal Vocalization", description: "Decoding the communication of animals.", link: "/animal-vocalization", image: "animalvocalization.png" },
+  { title: "Education", description: "Experiential learning for advanced AI and robotics.", link: "/education", image: "education.png" },
 ];
 
 const technologies = [
-  { name: "CAIPO", description: "Optimizing health and performance: personal and organizational growth.", link: "/caipo", image: "caipotech.png" },
-  { name: "MoodChanger for People", description: "Transforming your mood and health, one insight at a time.", link: "/moodchanger-people", image: "transforming.png" },
-  { name: "MoodChanger for Pets", description: "Redefining pet wellness for better care.", link: "/moodchanger-pets", image: "forpets.png" },
-  { name: "AI Travel on Earth and Beyond", description: "Conversational AI is changing the way we explore and travel the world.", link: "/ai-travel", image: "aitravel.png" },
-  { name: "Animal Vocalization", description: "Talking to your pets is about to become reality.", link: "/animal-vocalization", image: "animalvocalization.png" },
-  { name: "AI and Robotics", description: "We are on the cusp of a revolution.", link: "/ai-robotics", image: "airoboticspics.jpg" }
+  { name: "Chief AIPO", description: "Conversational AI Platform Oracle", image: "chiefaipo.png", link: "/caipo" },
+  { name: "EduCapsule", description: "Experiential learning for advanced AI", image: "education.png", link: "/education" },
+  { name: "Mood Changer (People)", description: "AI-powered emotional support", image: "moodchanger.png", link: "/moodchanger-people" },
+  { name: "Mood Changer (Pets)", description: "Emotional well-being for animals", image: "moodchangerpets.png", link: "/moodchanger-pets" },
+  { name: "Transforming Healthcare", description: "AI-driven medical innovations", image: "transforming.png", link: "/healthcare" },
+  { name: "Space", description: "AI applications in space exploration", image: "space.png", link: "/space" },
 ];
 
 const aboutProjects = [
-  { title: "Travel AI", description: "Conversational AI for personalized trip planning.", link: "https://www.flomadtravel.com/", buttonText: "Visit Site", buttonLink: "https://www.flomadtravel.com/", image: "conversationalai.png" },
-  { title: "Advanced AI & Robotics Education", description: "Empowering learners through experiential learning.", link: "https://flomad.international/", buttonText: "Visit Site", buttonLink: "https://flomad.international/", image: "aiagirobotics.png" },
-  { title: "Chief AI Productivity Officer (CAIPO)", description: "Optimizing lifestyles through AI-driven IoT technologies.", link: "https://www.caipo.ai/", buttonText: "Visit Site", buttonLink: "https://www.caipo.ai/", image: "caipo.png" },
-  { title: "RoboCollective", description: "Your very own robot dealership franchise.", link: "https://www.robocollective.ai/", buttonText: "Visit Site", buttonLink: "https://www.robocollective.ai/", image: "robocollective2.png" }
+  { title: "Our Focus",description: "AI and robotics for real-world impact.", image: "ourfocuspicone.png", link: "/#focus", buttonText: "Learn More", buttonLink: "/#focus" },
+  { title: "Technologies", description: "Innovative solutions for tomorrow.", image: "refiningpic.png", link: "/#technologies", buttonText: "Explore Tech", buttonLink: "/#technologies" },
+  { title: "About Us", description: "Pioneering the future of intelligence.", image: "flolabssocial.png", link: "/#about", buttonText: "Our Story", buttonLink: "/#about" },
+  { title: "Travel Innovations", description: "Smart travel through AI.", image: "travel.png", link: "/travel", buttonText: "Discover", buttonLink: "/travel" },
 ];
 
 async function uploadImage(imagePath) {
-  const formData = new FormData();
-  formData.append('files', fs.createReadStream(imagePath));
-  
-  const response = await axios.post(
-    `${STRAPI_URL}/api/upload`,
-    formData,
-    {
-      headers: {
-        ...formData.getHeaders(),
-        Authorization: `Bearer ${API_TOKEN}`
+  try {
+    const formData = new FormData();
+    formData.append('files', fs.createReadStream(imagePath));
+    
+    const response = await axios.post(
+      `${STRAPI_URL}/api/upload`,
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+          Authorization: `Bearer ${API_TOKEN}`
+        }
       }
-    }
-  );
-  
-  return response.data[0].id;
+    );
+    
+    return response.data[0].id;
+  } catch (error) {
+    console.error(`Error uploading ${imagePath}:`, error.response?.data || error.message);
+    throw error;
+  }
 }
 
 async function seedProduction() {
@@ -55,6 +61,7 @@ async function seedProduction() {
     console.log('📸 Uploading images and creating content...\n');
 
     // Seed Focus Areas
+    console.log('🎯 Creating Focus Areas...');
     for (const focus of focusAreas) {
       const imagePath = path.join(IMAGE_DIR, focus.image);
       const imageId = await uploadImage(imagePath);
@@ -77,10 +84,11 @@ async function seedProduction() {
           }
         }
       );
-      console.log(`✅ Created Focus Area: ${focus.title}`);
+      console.log(`✅ ${focus.title}`);
     }
 
     // Seed Technologies
+    console.log('\n💡 Creating Technologies...');
     for (const tech of technologies) {
       const imagePath = path.join(IMAGE_DIR, tech.image);
       const imageId = await uploadImage(imagePath);
@@ -91,8 +99,8 @@ async function seedProduction() {
           data: {
             name: tech.name,
             description: tech.description,
-            link: tech.link,
             image: imageId,
+            link: tech.link,
             publishedAt: new Date().toISOString()
           }
         },
@@ -103,10 +111,11 @@ async function seedProduction() {
           }
         }
       );
-      console.log(`✅ Created Technology: ${tech.name}`);
+      console.log(`✅ ${tech.name}`);
     }
 
     // Seed About Projects
+    console.log('\n📖 Creating About Projects...');
     for (const project of aboutProjects) {
       const imagePath = path.join(IMAGE_DIR, project.image);
       const imageId = await uploadImage(imagePath);
@@ -117,10 +126,10 @@ async function seedProduction() {
           data: {
             title: project.title,
             description: project.description,
+            image: imageId,
             link: project.link,
             buttonText: project.buttonText,
             buttonLink: project.buttonLink,
-            image: imageId,
             publishedAt: new Date().toISOString()
           }
         },
@@ -131,12 +140,15 @@ async function seedProduction() {
           }
         }
       );
-      console.log(`✅ Created About Project: ${project.title}`);
+      console.log(`✅ ${project.title}`);
     }
 
-    console.log('\n✨ Production seeding complete!');
+    console.log('\n✅ Production seeding complete!');
+    console.log(`\n🌐 API URL: ${STRAPI_URL}/api`);
+    console.log(`📊 Created: ${focusAreas.length} focus areas, ${technologies.length} technologies, ${aboutProjects.length} about projects`);
+    
   } catch (error) {
-    console.error('❌ Error:', error.response?.data || error.message);
+    console.error('\n❌ Error:', error.response?.data || error.message);
     process.exit(1);
   }
 }
