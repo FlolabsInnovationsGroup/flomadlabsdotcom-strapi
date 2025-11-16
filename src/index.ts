@@ -5,13 +5,13 @@ export default {
     console.log('🔐 Configuring API permissions...');
     
     try {
-      // Get authenticated role
-      const authenticatedRole = await strapi.db
+      // Get the public role (API tokens use public permissions in Strapi 5)
+      const publicRole = await strapi.db
         .query('plugin::users-permissions.role')
-        .findOne({ where: { type: 'authenticated' } });
+        .findOne({ where: { type: 'public' } });
 
-      if (!authenticatedRole) {
-        console.error('❌ Authenticated role not found');
+      if (!publicRole) {
+        console.error('❌ Public role not found');
         return;
       }
 
@@ -26,7 +26,7 @@ export default {
         for (const action of actions) {
           const permissionData = {
             action: `api::${contentType}.${contentType}.${action}`,
-            role: authenticatedRole.id,
+            role: publicRole.id,
             enabled: true,
           };
 
@@ -36,18 +36,16 @@ export default {
             .findOne({
               where: {
                 action: permissionData.action,
-                role: authenticatedRole.id,
+                role: publicRole.id,
               },
             });
 
           if (existing) {
-            // Update if exists
             await strapi.db.query('plugin::users-permissions.permission').update({
               where: { id: existing.id },
               data: { enabled: true },
             });
           } else {
-            // Create if doesn't exist
             await strapi.db.query('plugin::users-permissions.permission').create({
               data: permissionData,
             });
@@ -56,38 +54,35 @@ export default {
         }
       }
 
-      // Also enable upload permissions
-      const uploadActions = ['upload'];
-      for (const action of uploadActions) {
-        const permissionData = {
-          action: `plugin::upload.content-api.${action}`,
-          role: authenticatedRole.id,
-          enabled: true,
-        };
+      // Enable upload permissions
+      const uploadPermission = {
+        action: 'plugin::upload.content-api.upload',
+        role: publicRole.id,
+        enabled: true,
+      };
 
-        const existing = await strapi.db
-          .query('plugin::users-permissions.permission')
-          .findOne({
-            where: {
-              action: permissionData.action,
-              role: authenticatedRole.id,
-            },
-          });
+      const existingUpload = await strapi.db
+        .query('plugin::users-permissions.permission')
+        .findOne({
+          where: {
+            action: uploadPermission.action,
+            role: publicRole.id,
+          },
+        });
 
-        if (existing) {
-          await strapi.db.query('plugin::users-permissions.permission').update({
-            where: { id: existing.id },
-            data: { enabled: true },
-          });
-        } else {
-          await strapi.db.query('plugin::users-permissions.permission').create({
-            data: permissionData,
-          });
-        }
-        enabledCount++;
+      if (existingUpload) {
+        await strapi.db.query('plugin::users-permissions.permission').update({
+          where: { id: existingUpload.id },
+          data: { enabled: true },
+        });
+      } else {
+        await strapi.db.query('plugin::users-permissions.permission').create({
+          data: uploadPermission,
+        });
       }
+      enabledCount++;
 
-      console.log(`✅ Enabled ${enabledCount} API permissions`);
+      console.log(`✅ Enabled ${enabledCount} public API permissions`);
     } catch (error) {
       console.error('❌ Error configuring permissions:', error.message);
       console.error(error.stack);
