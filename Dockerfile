@@ -22,14 +22,13 @@ ENV NODE_ENV=production
 # Force clean build - remove any cached dist
 RUN rm -rf dist && \
     npx tsc && \
-    echo "=== TypeScript compilation complete ===" && \
-    ls -la dist/src/api/focus-area/routes/ && \
-    echo "=== Route file content ===" && \
-    cat dist/src/api/focus-area/routes/focus-area.js && \
-    echo "==="
+    echo "=== TypeScript compilation complete ==="
+
+# Build the admin panel
+RUN npm run build
 
 # Expose port
 EXPOSE 1337
 
 # Start command
-CMD ["node", "start.js"]
+CMD ["npm", "run", "start"]
