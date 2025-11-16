@@ -12,7 +12,8 @@ RUN npm install
 
 # Install platform-specific packages for Railway Linux AFTER other dependencies
 RUN npm install --os=linux --cpu=x64 sharp && \
-    npm install --force @swc/core-linux-x64-gnu @swc/core-linux-x64-musl
+    npm install --force @swc/core-linux-x64-gnu @swc/core-linux-x64-musl && \
+    npm install --force @rollup/rollup-linux-x64-gnu
 
 # Copy source code
 COPY . .
