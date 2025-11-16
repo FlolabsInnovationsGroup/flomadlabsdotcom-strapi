@@ -1,20 +1,30 @@
-// import type { Core } from '@strapi/strapi';
-
 export default {
-  /**
-   * An asynchronous register function that runs before
-   * your application is initialized.
-   *
-   * This gives you an opportunity to extend code.
-   */
-  register(/* { strapi }: { strapi: Core.Strapi } */) {},
+  register(/* { strapi } */) {},
 
-  /**
-   * An asynchronous bootstrap function that runs before
-   * your application gets started.
-   *
-   * This gives you an opportunity to set up your data model,
-   * run jobs, or perform some special logic.
-   */
-  bootstrap(/* { strapi }: { strapi: Core.Strapi } */) {},
+  async bootstrap({ strapi }) {
+    console.log('🔐 Configuring API permissions...');
+    
+    try {
+      // Get all permissions for the authenticated role
+      const permissions = await strapi.db.query('plugin::users-permissions.permission').findMany({
+        where: {
+          role: {
+            type: 'authenticated',
+          },
+        },
+      });
+
+      // Enable all permissions
+      for (const permission of permissions) {
+        await strapi.db.query('plugin::users-permissions.permission').update({
+          where: { id: permission.id },
+          data: { enabled: true },
+        });
+      }
+      
+      console.log(`✅ Enabled ${permissions.length} API permissions`);
+    } catch (error) {
+      console.error('❌ Error configuring permissions:', error.message);
+    }
+  },
 };
