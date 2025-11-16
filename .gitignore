@@ -128,4 +128,4 @@ exports
 dist
 build
 .strapi-updater.json
-.strapi-cloud.json
+.strapi-cloud.json# Force rebuild Sun Nov 16 17:26:35 EST 2025
