@@ -4,14 +4,14 @@ FROM node:20.19.5-slim
 
 WORKDIR /app
 
-# Install platform-specific sharp for Railway Linux
-RUN npm install --os=linux --cpu=x64 sharp
-
 # Copy package files
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install
+
+# Install platform-specific sharp for Railway Linux AFTER other dependencies
+RUN npm install --os=linux --cpu=x64 sharp
 
 # Copy source code
 COPY . .
