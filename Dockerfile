@@ -10,8 +10,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Install platform-specific sharp for Railway Linux AFTER other dependencies
-RUN npm install --os=linux --cpu=x64 sharp
+# Install platform-specific packages for Railway Linux AFTER other dependencies
+RUN npm install --os=linux --cpu=x64 sharp && \
+    npm install --force @swc/core-linux-x64-gnu @swc/core-linux-x64-musl
 
 # Copy source code
 COPY . .
