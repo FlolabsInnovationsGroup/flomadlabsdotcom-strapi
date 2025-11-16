@@ -2,10 +2,30 @@ import { factories } from '@strapi/strapi';
 
 export default factories.createCoreRouter('api::technology.technology', {
   config: {
-    find: { auth: false },
-    findOne: { auth: false },
-    create: { auth: false },
-    update: { auth: false },
-    delete: { auth: false },
+    find: {
+      auth: false,
+      policies: [],
+      middlewares: [],
+    },
+    findOne: {
+      auth: false,
+      policies: [],
+      middlewares: [],
+    },
+    create: {
+      auth: false,
+      policies: [],
+      middlewares: [],
+    },
+    update: {
+      auth: false,
+      policies: [],
+      middlewares: [],
+    },
+    delete: {
+      auth: false,
+      policies: [],
+      middlewares: [],
+    },
   },
 });
