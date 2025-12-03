@@ -7,13 +7,11 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
-
-# Install platform-specific packages for Railway Linux AFTER other dependencies
-RUN npm install --os=linux --cpu=x64 sharp && \
+# Install dependencies with platform-specific packages
+RUN npm install && \
+    npm install --os=linux --cpu=x64 sharp && \
     npm install --force @swc/core-linux-x64-gnu @swc/core-linux-x64-musl && \
-    npm install --force @rollup/rollup-linux-x64-gnu
+    npm install --force @rollup/rollup-linux-x64-gnu @rollup/rollup-linux-x64-musl
 
 # Copy source code
 COPY . .
@@ -28,6 +26,9 @@ RUN rm -rf dist && \
 
 # Build the admin panel
 RUN npm run build
+
+# Create uploads directory and set permissions
+RUN mkdir -p /app/public/uploads && chmod 755 /app/public/uploads
 
 # Expose port
 EXPOSE 1337
